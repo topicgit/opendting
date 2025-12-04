@@ -134,13 +134,17 @@
         <p class="mt-1 text-sm opacity-80">听万物 · 辨善恶 · 识真伪</p>
       </div>
 
-      <div class="flex items-center gap-3">
-        <button id="modeToggle" aria-label="切换深色模式" class="px-3 py-2 rounded-lg border border-white/30 text-sm">深色/浅色</button>
-      </div>
+     <div class="flex items-center gap-3">
+       <button id="modeToggle" aria-label="切换深色模式" class="px-3 py-2 rounded-lg border border-white/30 text-sm">深色/浅色</button>
+     </div>
     </div>
     <!-- 搜索栏（内嵌在 header 的玻璃块） -->
     <div class="mt-5">
-      <input id="searchInput" placeholder="搜索网站、标签、描述..." class="w-full p-4 rounded-xl text-sm bg-gradient-to-r from-black/70 via-white/4  to-black/35   backdrop-blur-xl" />
+       <!--  <input id="searchInput" placeholder="搜索网站、标签、描述..." class="w-full p-4 rounded-xl text-sm bg-gradient-to-r from-black/70 via-white/4  to-black/35   backdrop-blur-xl" /> -->
+        <form action="https://www.google.com/search" method="get" target="_blank">
+            <input id="searchInput" type="text" name="q" placeholder="使用 Google 搜索..." class="w-full p-4 rounded-xl text-sm bg-gradient-to-r from-black/70 via-white/4  to-black/35   backdrop-blur-xl" required>
+           <!-- <button type="submit"><i class="fas fa-search"></i> 搜索</button> -->
+        </form>
     </div>
 
   </header>
@@ -150,82 +154,90 @@
 <!-- 合并后的卡片展示区 -->
 <section id="groups" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 
-  <!-- 今日热榜 -->
-  <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
-              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
-      <div class="flex flex-col items-center text-center">
-          <div class="text-5xl text-orange-500 mb-4 group-hover:scale-110 transition-transform duration-300">
-              <i class="fa-solid fa-fire"></i>
-          </div>
-          <div class="text-xl font-semibold">今日热榜</div>
-          <div class="text-gray-500 text-sm">新闻资讯聚合的网站</div>
-      </div>
-  </div>
+    <!-- 今日热榜 -->
+    <div class="card group rounded-2xl p-8
+                bg-white dark:bg-gray-800
+                shadow-sm border border-transparent
+                hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+        <div class="flex flex-col items-center text-center">
+            <div class="text-5xl text-orange-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+                <i class="fa-solid fa-fire"></i>
+            </div>
+            <div class="text-xl font-semibold text-gray-900 dark:text-gray-100">今日热榜</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">新闻资讯聚合的网站</div>
+        </div>
+    </div>
 
+    <!-- NewsNow -->
+    <div class="card group rounded-2xl p-8
+                bg-white dark:bg-gray-800
+                shadow-sm border border-transparent
+                hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+        <div class="flex flex-col items-center text-center">
+            <div class="text-5xl text-blue-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+                <i class="fa-solid fa-newspaper"></i>
+            </div>
+            <div class="text-xl font-semibold text-gray-900 dark:text-gray-100">NewsNow</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">新闻资讯聚合的网站</div>
+        </div>
+    </div>
 
-  <!-- NewsNow -->
-  <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
-              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
-      <div class="flex flex-col items-center text-center">
-          <div class="text-5xl text-blue-500 mb-4 group-hover:scale-110 transition-transform duration-300">
-              <i class="fa-solid fa-newspaper"></i>
-          </div>
-          <div class="text-xl font-semibold">NesNow</div>
-          <div class="text-gray-500 text-sm">新闻资讯聚合的网站</div>
-      </div>
-  </div>
+    <!-- InfoQ -->
+    <div class="card group rounded-2xl p-8
+                bg-white dark:bg-gray-800
+                shadow-sm border border-transparent
+                hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+        <div class="flex flex-col items-center text-center">
+            <div class="text-5xl text-teal-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+                <i class="fa-solid fa-laptop-code"></i>
+            </div>
+            <div class="text-xl font-semibold text-gray-900 dark:text-gray-100">InfoQ技术网站</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">互联网资讯技术网站</div>
+        </div>
+    </div>
 
+    <!-- 阮一峰 -->
+    <div class="card group rounded-2xl p-8
+                bg-white dark:bg-gray-800
+                shadow-sm border border-transparent
+                hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+        <div class="flex flex-col items-center text-center">
+            <div class="text-5xl text-purple-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <div class="text-xl font-semibold text-gray-900 dark:text-gray-100">阮一峰博客</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">技术博客和技术周刊</div>
+        </div>
+    </div>
 
-  <!-- InfoQ -->
-  <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
-              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
-      <div class="flex flex-col items-center text-center">
-          <div class="text-5xl text-teal-500 mb-4 group-hover:scale-110 transition-transform duration-300">
-              <i class="fa-solid fa-laptop-code"></i>
-          </div>
-          <div class="text-xl font-semibold">InfoQ技术网站</div>
-          <div class="text-gray-500 text-sm">互联网资讯技术网站</div>
-      </div>
-  </div>
+    <!-- HelloGithub -->
+    <div class="card group rounded-2xl p-8
+                bg-white dark:bg-gray-800
+                shadow-sm border border-transparent
+                hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+        <div class="flex flex-col items-center text-center">
+            <div class="text-5xl text-yellow-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+                <i class="fa-brands fa-github"></i>
+            </div>
+            <div class="text-xl font-semibold text-gray-900 dark:text-gray-100">HelloGithub</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">Github 有趣的项目和软件</div>
+        </div>
+    </div>
 
+    <!-- 博客园 -->
+    <div class="card group rounded-2xl p-8
+                bg-white dark:bg-gray-800
+                shadow-sm border border-transparent
+                hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+        <div class="flex flex-col items-center text-center">
+            <div class="text-5xl text-blue-600 mb-4 group-hover:scale-110 transition-transform duration-300">
+                <i class="fa-solid fa-rss"></i>
+            </div>
+            <div class="text-xl font-semibold text-gray-900 dark:text-gray-100">博客园</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">中国技术博客网站</div>
+        </div>
+    </div>
 
-  <!-- 阮一峰 -->
-  <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
-              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
-      <div class="flex flex-col items-center text-center">
-          <div class="text-5xl text-purple-500 mb-4 group-hover:scale-110 transition-transform duration-300">
-              <i class="fa-solid fa-book-open"></i>
-          </div>
-          <div class="text-xl font-semibold">阮一峰博客</div>
-          <div class="text-gray-500 text-sm">技术博客和技术周刊</div>
-      </div>
-  </div>
-
-
-  <!-- helloGitHub -->
-   <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
-              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
-      <div class="flex flex-col items-center text-center">
-          <div class="text-5xl text-yellow-500 mb-4 group-hover:scale-110 transition-transform duration-300">
-              <i class="fa-brands fa-github"></i>
-          </div>
-          <div class="text-xl font-semibold">HelloGithub</div>
-          <div class="text-gray-500 text-sm">Github 有趣的项目和软件</div>
-      </div>
-  </div>
-
-
-  <!-- 博客园 -->
-  <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
-              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
-      <div class="flex flex-col items-center text-center">
-          <div class="text-5xl text-blue-600 mb-4 group-hover:scale-110 transition-transform duration-300">
-              <i class="fa-solid fa-rss"></i>
-          </div>
-          <div class="text-xl font-semibold">博客园</div>
-          <div class="text-gray-500 text-sm">中国技术博客网站</div>
-      </div>
-  </div>
 
 
 </section>
