@@ -9,6 +9,7 @@
     tailwind.config = { darkMode: 'class' }
   </script>
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500;700&display=swap" rel="stylesheet">
@@ -87,9 +88,15 @@
 
     /* 卡片玻璃细节 */
     .nav-card{
-      transition: transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s;
+          transition: all 0.25s ease;
+          transform: translateY(0);
     }
-    .nav-card:hover{ transform: translateY(-8px) scale(1.01); }
+    .nav-card:hover{
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+      background: rgba(255, 255, 255, 0.55); /* 提升一点亮度，保持玻璃效果 */
+      backdrop-filter: blur(18px);
+    }
 
     /* iOS 风格圆角与光泽（顶部高光） */
     .glass::before{
@@ -139,113 +146,92 @@
 
   <main class="max-w-5xl mx-auto px-4 mt-8">
 
+<!-- 合并后的卡片展示区 -->
+<section id="groups" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 
-
-    <!-- 分组 + 卡片 -->
-    <section id="groups" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-      <div class="glass p-4 ink-edge">
-        <h3 class="text-xl font-semibold mb-4">新闻资讯</h3>
-        <div id="group-tools" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-          <!-- 卡片示例 -->
-          <div class="nav-card relative glass p-4 rounded-2xl nav-card" data-title="jinrirebang" data-tags="搜索 国际" draggable="true">
-            <a href="https://tophub.today/" target="_blank" class="flex items-start gap-3">
-             <!--  <img src="https://file.ipadown.com/tophub/assets/images/logo.png" class="w-8 h-8 rounded" /> -->
-              <div>
-                <div class="font-semibold text-lg">今日热榜</div>
-                <div class="text-sm opacity-70">新闻汇总</div>
-                <div class="mt-2 flex gap-2 text-xs opacity-80">
-                  <span class="px-2 py-1 border rounded">新闻</span>
-                  <span class="px-2 py-1 border rounded">资讯</span>
-                </div>
-              </div>
-            </a>
+  <!-- 今日热榜 -->
+  <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
+              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+      <div class="flex flex-col items-center text-center">
+          <div class="text-5xl text-orange-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+              <i class="fa-solid fa-fire"></i>
           </div>
-
-          <div class="nav-card relative glass p-4 rounded-2xl nav-card" data-title="NewsNow" data-tags="代码 开发" draggable="true">
-            <a href="https://newsnow.busiyi.world" target="_blank" class="flex items-start gap-3">
-              <div>
-                <div class="font-semibold text-lg">NewsNow</div>
-                <div class="text-sm opacity-70">新闻聚合</div>
-                <div class="mt-2 flex gap-2 text-xs opacity-80">
-                  <span class="px-2 py-1 border rounded">新闻</span>
-                  <span class="px-2 py-1 border rounded">资讯</span>
-                </div>
-              </div>
-            </a>
-          </div>
-
-          <div class="nav-card relative glass p-4 rounded-2xl nav-card" data-title="infoq" data-tags="技术资讯" draggable="true">
-            <a href="https://www.infoq.cn" target="_blank" class="flex items-start gap-3">
-              <div>
-                <div class="font-semibold text-lg">InfoQ</div>
-                <div class="text-sm opacity-70">技术资讯</div>
-                <div class="mt-2 flex gap-2 text-xs opacity-80">
-                  <span class="px-2 py-1 border rounded">新闻</span>
-                  <span class="px-2 py-1 border rounded">资讯</span>
-                </div>
-              </div>
-            </a>
-          </div>
-
-
-        </div>
+          <div class="text-xl font-semibold">今日热榜</div>
+          <div class="text-gray-500 text-sm">新闻资讯聚合的网站</div>
       </div>
+  </div>
 
-      <div class="glass p-4 ink-edge">
-        <h3 class="text-xl font-semibold mb-4">博客</h3>
-        <div id="group-tools" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-          <!-- 卡片示例 -->
-          <div class="nav-card relative glass p-4 rounded-2xl nav-card" data-title="ruanyifeng" data-tags="博客" draggable="true">
-            <a href="https://www.ruanyifeng.com/blog/" target="_blank" class="flex items-start gap-3">
-              <div>
-                <div class="font-semibold text-lg">阮一峰</div>
-                <div class="text-sm opacity-70">技术博客</div>
-                <div class="mt-2 flex gap-2 text-xs opacity-80">
-                  <span class="px-2 py-1 border rounded">技术</span>
-                  <span class="px-2 py-1 border rounded">博客</span>
-                </div>
-              </div>
-            </a>
+  <!-- NewsNow -->
+  <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
+              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+      <div class="flex flex-col items-center text-center">
+          <div class="text-5xl text-blue-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+              <i class="fa-solid fa-newspaper"></i>
           </div>
-
-          <div class="nav-card relative glass p-4 rounded-2xl nav-card" data-title="helloGitHub" data-tags="技术网站" draggable="true">
-            <a href="https://hellogithub.com" target="_blank" class="flex items-start gap-3">
-              <div>
-                <div class="font-semibold text-lg">helloGithub</div>
-                <div class="text-sm opacity-70">技术网站</div>
-                <div class="mt-2 flex gap-2 text-xs opacity-80">
-                  <span class="px-2 py-1 border rounded">技术</span>
-                  <span class="px-2 py-1 border rounded">网站</span>
-                </div>
-              </div>
-            </a>
-          </div>
-
-          <div class="nav-card relative glass p-4 rounded-2xl nav-card" data-title="cnblogs" data-tags="博客" draggable="true">
-            <a href="https://www.cnblogs.com/" target="_blank" class="flex items-start gap-3">
-              <div>
-                <div class="font-semibold text-lg">博客园</div>
-                <div class="text-sm opacity-70">技术网站</div>
-                <div class="mt-2 flex gap-2 text-xs opacity-80">
-                  <span class="px-2 py-1 border rounded">技术</span>
-                  <span class="px-2 py-1 border rounded">博客</span>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div>
+          <div class="text-xl font-semibold">NesNow</div>
+          <div class="text-gray-500 text-sm">新闻资讯聚合的网站</div>
       </div>
+  </div>
 
 
-
-
-        </div>
+  <!-- InfoQ -->
+  <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
+              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+      <div class="flex flex-col items-center text-center">
+          <div class="text-5xl text-teal-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+              <i class="fa-solid fa-laptop-code"></i>
+          </div>
+          <div class="text-xl font-semibold">InfoQ技术网站</div>
+          <div class="text-gray-500 text-sm">互联网资讯技术网站</div>
       </div>
+  </div>
 
-    </section>
+
+  <!-- 阮一峰 -->
+  <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
+              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+      <div class="flex flex-col items-center text-center">
+          <div class="text-5xl text-purple-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+              <i class="fa-solid fa-book-open"></i>
+          </div>
+          <div class="text-xl font-semibold">阮一峰博客</div>
+          <div class="text-gray-500 text-sm">技术博客和技术周刊</div>
+      </div>
+  </div>
+
+
+  <!-- helloGitHub -->
+   <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
+              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+      <div class="flex flex-col items-center text-center">
+          <div class="text-5xl text-yellow-500 mb-4 group-hover:scale-110 transition-transform duration-300">
+              <i class="fa-brands fa-github"></i>
+          </div>
+          <div class="text-xl font-semibold">HelloGithub</div>
+          <div class="text-gray-500 text-sm">Github 有趣的项目和软件</div>
+      </div>
+  </div>
+
+
+  <!-- 博客园 -->
+  <div class="card group rounded-2xl p-8 bg-white shadow-sm border border-transparent
+              hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
+      <div class="flex flex-col items-center text-center">
+          <div class="text-5xl text-blue-600 mb-4 group-hover:scale-110 transition-transform duration-300">
+              <i class="fa-solid fa-rss"></i>
+          </div>
+          <div class="text-xl font-semibold">博客园</div>
+          <div class="text-gray-500 text-sm">中国技术博客网站</div>
+      </div>
+  </div>
+
+
+</section>
+
+
+
+
 
   </main>
 
