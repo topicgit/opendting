@@ -142,8 +142,11 @@
       </div>
       <!-- 搜索栏（内嵌在 header 的玻璃块） -->
       <div class="mt-5">
-          <form action="https://www.google.com/search" method="get" target="_blank">
-              <input type="text" name="q" placeholder="使用 Google 搜索..." class="w-full p-4 rounded-xl text-sm bg-gradient-to-r from-black/70 via-white/4 to-black/35 backdrop-blur-xl" required>
+          <form action="https://www.google.com/search" method="get" target="_blank" class="flex gap-2">
+              <input type="text" name="q" placeholder="使用 Google 搜索..." class="flex-1 p-4 rounded-xl text-sm bg-gradient-to-r from-black/70 via-white/4 to-black/35 backdrop-blur-xl" required>
+              <button type="submit" class="px-6 py-4 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-xl border border-white/30 transition-all">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
           </form>
       </div>
     </header>
