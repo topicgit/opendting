@@ -1,256 +1,716 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>谛听</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = { darkMode: 'class' }
-  </script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>网址导航</title>
+<style>
+/* ══════════════════════════════════════════
+   Reset & Design Tokens
+══════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+/* ── Dark theme (default) ── */
+:root{
+  --bg:       #07080f;
+  --bg2:      #0d0f1a;
+  --glass:    rgba(255,255,255,0.042);
+  --glass-h:  rgba(255,255,255,0.075);
+  --bd:       rgba(255,255,255,0.07);
+  --bd-h:     rgba(255,255,255,0.16);
+  --t1:       #eef0ff;
+  --t2:       #7b80a8;
+  --t3:       #3a3d56;
+  --accent:   #6366f1;
+  --nav-bg:   rgba(7,8,15,.72);
+  --card-shimmer: rgba(255,255,255,.11);
+  --card-glow:    rgba(255,255,255,.055);
+  --rpl-bg:   rgba(255,255,255,.07);
+  --cn-hover: #ffffff;
+  --blur:     saturate(160%) blur(18px);
+  --r:        18px;
+  --rs:       11px;
+  --ease:     cubic-bezier(.4,0,.2,1);
+  --spd:      .22s;
+}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500;700&display=swap" rel="stylesheet">
+/* ── Light theme ── */
+html[data-theme="light"]{
+  --bg:       #f4f5fb;
+  --bg2:      #eaecf5;
+  --glass:    rgba(255,255,255,0.72);
+  --glass-h:  rgba(255,255,255,0.90);
+  --bd:       rgba(99,102,241,0.12);
+  --bd-h:     rgba(99,102,241,0.30);
+  --t1:       #1a1d2e;
+  --t2:       #5c6080;
+  --t3:       #9ca3c4;
+  --accent:   #6366f1;
+  --nav-bg:   rgba(244,245,251,.82);
+  --card-shimmer: rgba(99,102,241,.10);
+  --card-glow:    rgba(99,102,241,.04);
+  --rpl-bg:   rgba(99,102,241,.10);
+  --cn-hover: #1a1d2e;
+}
 
-  <style>
-    :root{
-      --glass-bg: rgba(255,255,255,0.35);
-      --glass-border: rgba(255,255,255,0.45);
-      --glass-dark-bg: rgba(20,20,20,0.32);
-      --glass-dark-border: rgba(255,255,255,0.06);
-      --ink: rgba(0,0,0,0.85);
-    }
+html{color-scheme:dark;scroll-behavior:smooth}
+html[data-theme="light"]{color-scheme:light}
 
-    /* 页面背景：水墨纸纹 + 轻微渐变 */
-    body{
-      font-family: 'Noto Serif SC', serif;
-      background-image: radial-gradient(circle at 10% 20%, rgba(0,0,0,0.012), transparent 20%),
-                        radial-gradient(circle at 90% 80%, rgba(0,0,0,0.008), transparent 20%),
-                        linear-gradient(180deg, rgba(250,250,248,1), rgba(240,240,238,1));
-      background-color: #fff;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
+/* ── Theme transition ── */
+body,body *{transition-property:background,background-color,border-color,color,box-shadow,opacity;
+            transition-duration:.3s;transition-timing-function:var(--ease);}
+/* but keep transform / layout transitions at original speed */
+.card,.ci,.rv,.sec-chevron,.ca{transition-duration:.22s!important}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter','PingFang SC','Hiragino Sans GB',sans-serif;
+  background:var(--bg);color:var(--t1);
+  min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
 
-    .dark body{
-      background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.02), transparent 20%),
-                        radial-gradient(circle at 90% 80%, rgba(255,255,255,0.01), transparent 20%),
-                        linear-gradient(180deg, rgba(10,10,12,1), rgba(14,14,16,1));
-      background-color: #0b0b0b;
-      color: #f7f7f7;
-    }
+/* ══════════════════════════════════════════
+   Ambient orbs
+══════════════════════════════════════════ */
+#ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(110px);will-change:transform}
+.o1{width:720px;height:720px;top:-220px;left:-180px;
+    background:radial-gradient(circle,rgba(99,102,241,.25),transparent 68%);
+    animation:drift1 24s var(--ease) infinite alternate}
+.o2{width:580px;height:580px;top:-80px;right:-160px;
+    background:radial-gradient(circle,rgba(139,92,246,.18),transparent 68%);
+    animation:drift2 19s var(--ease) infinite alternate}
+.o3{width:460px;height:460px;bottom:-60px;left:35%;
+    background:radial-gradient(circle,rgba(59,130,246,.14),transparent 68%);
+    animation:drift3 28s var(--ease) infinite alternate}
 
-    /* 全局玻璃容器样式 */
-    .glass {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(14px) saturate(120%);
-      -webkit-backdrop-filter: blur(14px) saturate(120%);
-      border-radius: 16px;
-      box-shadow: 0 6px 20px rgba(16,24,40,0.12);
-    }
-    .dark .glass{
-      background: var(--glass-dark-bg);
-      border: 1px solid var(--glass-dark-border);
-      box-shadow: 0 8px 30px rgba(2,6,23,0.6);
-    }
+html[data-theme="light"] .o1{background:radial-gradient(circle,rgba(99,102,241,.10),transparent 68%)}
+html[data-theme="light"] .o2{background:radial-gradient(circle,rgba(139,92,246,.08),transparent 68%)}
+html[data-theme="light"] .o3{background:radial-gradient(circle,rgba(59,130,246,.07),transparent 68%)}
+@keyframes drift1{to{transform:translate(50px,35px) scale(1.07)}}
+@keyframes drift2{to{transform:translate(-40px,25px) scale(1.1)}}
+@keyframes drift3{to{transform:translate(30px,-30px) scale(1.06)}}
 
-    /* 搜索栏专用玻璃（更强光泽） */
-    .glass-search{
-      background: linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0.18));
-      border: 1px solid rgba(255,255,255,0.6);
-      backdrop-filter: blur(18px) saturate(140%);
-      -webkit-backdrop-filter: blur(18px) saturate(140%);
-    }
-    .dark .glass-search{
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.06);
-    }
+/* ══════════════════════════════════════════
+   Navbar
+══════════════════════════════════════════ */
+.nav{
+  position:sticky;top:0;z-index:200;
+  height:58px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;
+  background:var(--nav-bg);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border-bottom:1px solid var(--bd);
+}
+.nav-brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--t1)}
+.nav-mark{
+  width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:14px;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+}
+.nav-name{font-size:.84rem;font-weight:700;letter-spacing:.05em}
+.nav-stat{
+  display:flex;align-items:center;gap:7px;
+  padding:4px 13px;border-radius:100px;
+  border:1px solid var(--bd);background:var(--glass);
+  backdrop-filter:blur(8px);font-size:.73rem;color:var(--t2);
+}
 
-    /* 水墨边框：仿墨迹的微小不规则边缘（装饰） */
-    .ink-edge{
-      position: relative;
-      overflow: visible;
-    }
-    .ink-edge::after{
-      content: '';
-      position: absolute;
-      inset: -10px -12px -14px -12px;
-      background: radial-gradient(circle at 10% 10%, rgba(0,0,0,0.04), transparent 14%),
-                  radial-gradient(circle at 90% 90%, rgba(0,0,0,0.03), transparent 12%);
-      pointer-events: none;
-      filter: blur(6px);
-      opacity: .9;
-    }
-    .dark .ink-edge::after{ opacity: .12; mix-blend-mode: overlay }
+/* ── Theme toggle button ── */
+.theme-btn{
+  display:flex;align-items:center;justify-content:center;
+  width:36px;height:36px;border-radius:50%;
+  border:1px solid var(--bd);
+  background:var(--glass);
+  backdrop-filter:blur(8px);
+  cursor:pointer;color:var(--t2);
+  transition:color var(--spd),border-color var(--spd),background var(--spd),transform var(--spd);
+  flex-shrink:0;
+}
+.theme-btn:hover{color:var(--t1);border-color:var(--bd-h);transform:rotate(20deg)}
+.theme-btn .icon-sun,.theme-btn .icon-moon{
+  position:absolute;transition:opacity .25s var(--ease),transform .3s var(--ease);
+}
+.theme-btn{position:relative}
+/* dark mode shows moon, light shows sun */
+html:not([data-theme="light"]) .theme-btn .icon-sun{opacity:0;transform:scale(.6) rotate(-90deg)}
+html:not([data-theme="light"]) .theme-btn .icon-moon{opacity:1;transform:scale(1) rotate(0)}
+html[data-theme="light"] .theme-btn .icon-sun{opacity:1;transform:scale(1) rotate(0)}
+html[data-theme="light"] .theme-btn .icon-moon{opacity:0;transform:scale(.6) rotate(90deg)}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;background:#22c55e;
+  box-shadow:0 0 7px rgba(34,197,94,.9);
+  animation:livepulse 2.2s ease infinite;
+}
+@keyframes livepulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-    /* 卡片玻璃细节 */
-    .nav-card{
-          transition: all 0.25s ease;
-          transform: translateY(0);
-    }
-    .nav-card:hover{
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-      background: rgba(255, 255, 255, 0.55); /* 提升一点亮度，保持玻璃效果 */
-      backdrop-filter: blur(18px);
-    }
+/* ══════════════════════════════════════════
+   Page wrapper
+══════════════════════════════════════════ */
+.page{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 28px 100px}
 
-    /* iOS 风格圆角与光泽（顶部高光） */
-    .glass::before{
-      content: '';
-      position: absolute; left:0; right:0; top:0;
-      height: 40%;
-      border-top-left-radius: 16px; border-top-right-radius:16px;
-      pointer-events:none;
-      background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0.02));
-      mix-blend-mode: overlay;
-      opacity: .9;
-    }
+/* ══════════════════════════════════════════
+   Hero
+══════════════════════════════════════════ */
+.hero{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:80px 0 56px;gap:18px;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 15px;border-radius:100px;
+  border:1px solid rgba(99,102,241,.28);
+  background:rgba(99,102,241,.08);
+  font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:#a5b4fc;
+}
+.hero h1{
+  font-size:clamp(2.2rem,5.5vw,4rem);font-weight:800;
+  letter-spacing:-.04em;line-height:1.08;
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(125deg,#c4b5fd 0%,#818cf8 30%,#38bdf8 65%,#67e8f9 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{font-size:.98rem;color:var(--t2);max-width:440px;line-height:1.68}
 
-    /* 适配 reduced transparency 偏好 */
-    @media (prefers-reduced-transparency: reduce){
-      .glass, .glass-search{ backdrop-filter: none; -webkit-backdrop-filter: none; }
-    }
+/* ══════════════════════════════════════════
+   Search
+══════════════════════════════════════════ */
+.search-box{width:100%;max-width:560px;position:relative;margin-top:6px}
+.search-box input{
+  width:100%;height:54px;padding:0 54px 0 50px;
+  border-radius:100px;border:1px solid var(--bd);
+  background:var(--glass);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  color:var(--t1);font-size:.93rem;outline:none;
+  transition:border-color var(--spd) var(--ease),
+             box-shadow   var(--spd) var(--ease),
+             background   var(--spd) var(--ease);
+  caret-color:var(--accent);
+}
+.search-box input::placeholder{color:var(--t3)}
+.search-box input:focus{
+  border-color:rgba(99,102,241,.55);
+  background:var(--glass-h);
+  box-shadow:0 0 0 4px rgba(99,102,241,.13),0 8px 32px rgba(0,0,0,.2);
+}
+.si{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;display:flex}
+.sk{
+  position:absolute;right:17px;top:50%;transform:translateY(-50%);
+  display:flex;align-items:center;gap:3px;pointer-events:none;
+}
+.sk kbd{
+  font-family:inherit;font-size:.67rem;color:var(--t3);
+  background:var(--glass);border:1px solid var(--bd);
+  border-radius:5px;padding:2px 6px;
+}
+.sc{
+  display:none;position:absolute;right:15px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--t3);padding:4px;
+  border-radius:50%;line-height:0;transition:color var(--spd);
+}
+.sc:hover{color:var(--t2)}
+.search-box.hasval .sk{display:none}
+.search-box.hasval .sc{display:flex}
 
-    /* 小屏幕优化 */
-    @media (max-width:640px){
-      .glass{ border-radius:12px }
-      .glass-search{ border-radius:12px }
-    }
+/* ══════════════════════════════════════════
+   Section
+══════════════════════════════════════════ */
+.sec{margin-bottom:48px}
+.sec-hd{
+  display:flex;align-items:center;gap:11px;
+  margin-bottom:18px;cursor:pointer;user-select:none;
+}
+.sec-hd:hover .sec-label{border-color:var(--bd-h)}
+.sec-label{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 14px;border-radius:100px;
+  font-size:.78rem;font-weight:700;letter-spacing:.025em;
+  border:1px solid transparent;
+  transition:border-color var(--spd),background var(--spd);
+}
+.sec-n{font-size:.73rem;color:var(--t3)}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--bd),transparent)}
+.sec-chevron{color:var(--t3);line-height:0;transition:transform var(--spd) var(--ease),color var(--spd);flex-shrink:0}
+.sec-hd:hover .sec-chevron{color:var(--t2)}
+.sec.collapsed .sec-chevron{transform:rotate(-90deg)}
+.sec-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:12px;
+}
+.sec.collapsed .sec-grid{display:none}
 
-    [v-cloak] { display: none; }
-  </style>
+/* Category colors */
+.c-search .sec-label{background:rgba(99,102,241,.10);border-color:rgba(99,102,241,.18);color:#a5b4fc}
+.c-ai     .sec-label{background:rgba(139,92,246,.10);border-color:rgba(139,92,246,.18);color:#c4b5fd}
+.c-dev    .sec-label{background:rgba(16,185,129,.09);border-color:rgba(16,185,129,.18);color:#6ee7b7}
+.c-social .sec-label{background:rgba(244,114,182,.09);border-color:rgba(244,114,182,.18);color:#f9a8d4}
+.c-news   .sec-label{background:rgba(251,146,60,.09);border-color:rgba(251,146,60,.18);color:#fcd34d}
+.c-design .sec-label{background:rgba(236,72,153,.09);border-color:rgba(236,72,153,.18);color:#f0abfc}
+.c-tool   .sec-label{background:rgba(14,165,233,.09);border-color:rgba(14,165,233,.18);color:#7dd3fc}
+.c-shop   .sec-label{background:rgba(245,158,11,.09);border-color:rgba(245,158,11,.18);color:#fde68a}
+
+/* Icon bg per category */
+.c-search .ci{background:rgba(99,102,241,.13)}
+.c-ai     .ci{background:rgba(139,92,246,.13)}
+.c-dev    .ci{background:rgba(16,185,129,.11)}
+.c-social .ci{background:rgba(244,114,182,.11)}
+.c-news   .ci{background:rgba(251,146,60,.11)}
+.c-design .ci{background:rgba(236,72,153,.11)}
+.c-tool   .ci{background:rgba(14,165,233,.11)}
+.c-shop   .ci{background:rgba(245,158,11,.11)}
+
+/* Hover shadow per category — dark */
+.c-search .card:hover{box-shadow:0 14px 48px rgba(99,102,241,.22),0 2px 8px rgba(0,0,0,.5)}
+.c-ai     .card:hover{box-shadow:0 14px 48px rgba(139,92,246,.22),0 2px 8px rgba(0,0,0,.5)}
+.c-dev    .card:hover{box-shadow:0 14px 48px rgba(16,185,129,.18),0 2px 8px rgba(0,0,0,.5)}
+.c-social .card:hover{box-shadow:0 14px 48px rgba(244,114,182,.18),0 2px 8px rgba(0,0,0,.5)}
+.c-news   .card:hover{box-shadow:0 14px 48px rgba(251,146,60,.18),0 2px 8px rgba(0,0,0,.5)}
+.c-design .card:hover{box-shadow:0 14px 48px rgba(236,72,153,.18),0 2px 8px rgba(0,0,0,.5)}
+.c-tool   .card:hover{box-shadow:0 14px 48px rgba(14,165,233,.18),0 2px 8px rgba(0,0,0,.5)}
+.c-shop   .card:hover{box-shadow:0 14px 48px rgba(245,158,11,.18),0 2px 8px rgba(0,0,0,.5)}
+
+/* Hover shadow per category — light (softer) */
+html[data-theme="light"] .c-search .card:hover{box-shadow:0 10px 40px rgba(99,102,241,.18),0 2px 8px rgba(0,0,0,.08)}
+html[data-theme="light"] .c-ai     .card:hover{box-shadow:0 10px 40px rgba(139,92,246,.18),0 2px 8px rgba(0,0,0,.08)}
+html[data-theme="light"] .c-dev    .card:hover{box-shadow:0 10px 40px rgba(16,185,129,.16),0 2px 8px rgba(0,0,0,.08)}
+html[data-theme="light"] .c-social .card:hover{box-shadow:0 10px 40px rgba(244,114,182,.16),0 2px 8px rgba(0,0,0,.08)}
+html[data-theme="light"] .c-news   .card:hover{box-shadow:0 10px 40px rgba(251,146,60,.16),0 2px 8px rgba(0,0,0,.08)}
+html[data-theme="light"] .c-design .card:hover{box-shadow:0 10px 40px rgba(236,72,153,.16),0 2px 8px rgba(0,0,0,.08)}
+html[data-theme="light"] .c-tool   .card:hover{box-shadow:0 10px 40px rgba(14,165,233,.16),0 2px 8px rgba(0,0,0,.08)}
+html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,158,11,.16),0 2px 8px rgba(0,0,0,.08)}
+
+/* ══════════════════════════════════════════
+   Card (glassmorphism)
+══════════════════════════════════════════ */
+.card{
+  position:relative;display:flex;flex-direction:column;gap:13px;
+  padding:20px 18px;border-radius:var(--r);
+  border:1px solid var(--bd);
+  background:var(--glass);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  text-decoration:none;color:inherit;overflow:hidden;cursor:pointer;
+  transition:transform var(--spd) var(--ease),
+             box-shadow var(--spd) var(--ease),
+             border-color var(--spd) var(--ease),
+             background var(--spd) var(--ease);
+  will-change:transform;
+}
+/* top shimmer line */
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 0%,var(--card-shimmer) 50%,transparent 100%);
+}
+/* inner radial glow on hover */
+.card::after{
+  content:'';position:absolute;inset:0;pointer-events:none;border-radius:var(--r);
+  background:radial-gradient(ellipse at 50% -10%,var(--card-glow),transparent 60%);
+  opacity:0;transition:opacity var(--spd) var(--ease);
+}
+.card:hover{transform:translateY(-6px) scale(1.015);border-color:var(--bd-h);background:var(--glass-h)}
+.card:hover::after{opacity:1}
+.card:active{transform:translateY(-2px) scale(1)}
+
+/* card icon */
+.ci{
+  width:44px;height:44px;border-radius:var(--rs);
+  display:grid;place-items:center;font-size:21px;
+  border:1px solid var(--bd);flex-shrink:0;
+  transition:transform var(--spd) var(--ease);
+}
+.card:hover .ci{transform:scale(1.12) rotate(-4deg)}
+
+/* card text */
+.ct{display:flex;flex-direction:column;gap:4px}
+.cn{font-size:.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t1);transition:color var(--spd)}
+.card:hover .cn{color:var(--cn-hover)}
+.cd{font-size:.75rem;line-height:1.48;color:var(--t2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* external link arrow */
+.ca{
+  position:absolute;top:13px;right:13px;color:var(--accent);line-height:0;
+  opacity:0;transform:translate(-4px,4px);
+  transition:opacity var(--spd) var(--ease),transform var(--spd) var(--ease);
+}
+.card:hover .ca{opacity:1;transform:translate(0,0)}
+
+/* ripple */
+.rpl{
+  position:absolute;border-radius:50%;
+  background:var(--rpl-bg);
+  transform:scale(0);
+  animation:rplout .5s var(--ease) forwards;
+  pointer-events:none;
+}
+@keyframes rplout{to{transform:scale(4);opacity:0}}
+
+/* ══════════════════════════════════════════
+   Empty state
+══════════════════════════════════════════ */
+.empty{
+  display:none;flex-direction:column;align-items:center;gap:14px;
+  padding:72px 0;color:var(--t3);
+}
+.empty.show{display:flex}
+.empty-ico{
+  width:52px;height:52px;border-radius:14px;
+  background:var(--glass);border:1px solid var(--bd);
+  display:grid;place-items:center;font-size:24px;opacity:.5;
+}
+.empty p{font-size:.86rem}
+
+/* ══════════════════════════════════════════
+   Footer
+══════════════════════════════════════════ */
+.footer{
+  margin-top:60px;padding-top:26px;
+  border-top:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:10px;
+  font-size:.76rem;color:var(--t3);
+}
+.f-left{display:flex;align-items:center;gap:6px}
+.f-sep{color:var(--t3)}
+.f-tips{display:flex;align-items:center;gap:8px}
+.f-tips kbd{
+  font-family:inherit;font-size:.68rem;
+  background:var(--glass);border:1px solid var(--bd);
+  border-radius:5px;padding:2px 6px;color:var(--t2);
+}
+
+/* ══════════════════════════════════════════
+   Scroll reveal
+══════════════════════════════════════════ */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.rv.in{opacity:1;transform:translateY(0)}
+.rv:nth-child(2){transition-delay:.07s}
+.rv:nth-child(3){transition-delay:.14s}
+.rv:nth-child(4){transition-delay:.18s}
+.rv:nth-child(5){transition-delay:.22s}
+.rv:nth-child(6){transition-delay:.26s}
+.rv:nth-child(7){transition-delay:.30s}
+.rv:nth-child(8){transition-delay:.34s}
+
+/* ══════════════════════════════════════════
+   Responsive
+══════════════════════════════════════════ */
+@media(max-width:768px){
+  .page{padding:0 16px 80px}
+  .nav{padding:0 16px}
+  .hero{padding:56px 0 40px}
+  .sec-grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
+  .card{padding:16px 14px}
+  .footer{justify-content:center;text-align:center}
+}
+@media(max-width:480px){
+  .sec-grid{grid-template-columns:1fr 1fr}
+}
+</style>
 </head>
+<body>
 
-<body class="bg-white text-black dark:bg-black dark:text-white transition-colors duration-500 min-h-screen flex flex-col">
-  <div id="app" v-cloak>
-    <!-- 顶部：全局玻璃 header -->
-    <header class="max-w-5xl mx-auto p-6 glass glass-search relative mt-8 ink-edge">
-      <div class="flex items-center justify-between gap-4">
-        <div>
-          <h1 class="text-4xl font-bold tracking-widest">谛听 · 天枢</h1>
-          <p class="mt-1 text-sm opacity-80">听万物 · 辨善恶 · 识真伪</p>
-        </div>
+<div id="ambient" aria-hidden="true">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+</div>
 
-       <div class="flex items-center gap-3">
-         <button @click="toggleDarkMode" class="px-3 py-2 rounded-lg border border-white/30 text-sm">深色/浅色</button>
-       </div>
-      </div>
-      <!-- 搜索栏（内嵌在 header 的玻璃块） -->
-      <div class="mt-5">
-          <form action="https://www.google.com/search" method="get" target="_blank" class="flex gap-2">
-              <input type="text" name="q" placeholder="使用 Google 搜索..." class="flex-1 p-4 rounded-xl text-sm bg-gradient-to-r from-black/70 via-white/4 to-black/35 backdrop-blur-xl" required>
-              <button type="submit" class="px-6 py-4 rounded-xl bg-gray/20 hover:bg-gray/30 backdrop-blur-xl border border-white/30 transition-all">
-                <i class="fa-solid fa-magnifying-glass"></i>
-              </button>
-          </form>
-      </div>
-    </header>
-
-    <main class="max-w-5xl mx-auto px-4 mt-8 flex-1">
-      <!-- 合并后的卡片展示区 -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <a
-          v-for="site in sites"
-          :key="site.name"
-          :href="site.url"
-          target="_blank"
-          class="card group rounded-2xl p-8 bg-white dark:bg-gray-800 shadow-sm border border-transparent
-                 hover:border-blue-500/30 hover:shadow-lg transition-all duration-300 cursor-pointer block"
-        >
-          <div class="flex flex-col items-center text-center">
-            <div :class="`text-5xl mb-4 group-hover:scale-110 transition-transform duration-300 ${site.iconColor}`">
-              <i :class="site.icon"></i>
-            </div>
-            <div class="text-xl font-semibold dark:text-white">{{ site.name }}</div>
-            <div class="text-gray-500 dark:text-gray-400 text-sm">{{ site.description }}</div>
-          </div>
-        </a>
-      </section>
-    </main>
-
-    <footer class="max-w-5xl mx-auto mt-10 p-4 text-center text-xs opacity-70">© 谛听之眼 · 中枢 · 2025</footer>
+<!-- ── Navbar ── -->
+<nav class="nav">
+  <a class="nav-brand" href="#">
+    <div class="nav-mark">🧭</div>
+    <span class="nav-name">NavHub</span>
+  </a>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="nav-stat">
+      <span class="live-dot"></span>
+      8 分类 · 50+ 网站
+    </div>
+    <button class="theme-btn" id="themeBtn" title="切换主题" aria-label="切换明暗主题">
+      <!-- sun -->
+      <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+      <!-- moon -->
+      <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
   </div>
+</nav>
 
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<div class="page">
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-tag">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Your Personal Navigator
+    </div>
+    <h1><em>智能网址导航</em><br/>一站直达所有工具</h1>
+    <p class="hero-sub">精选搜索引擎、AI 助手、开发利器与日常网站，让每一次上网高效又优雅</p>
+
+    <div class="search-box" id="sb">
+      <span class="si">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <input id="sq" type="search" placeholder="搜索网站名称或描述…" autocomplete="off" spellcheck="false"/>
+      <div class="sk"><kbd>/</kbd></div>
+      <button class="sc" id="sc" aria-label="清除">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ── Content ── -->
+  <main id="mc">
+
+    <!-- SVG arrow shared snippet (inline via JS) — defined once -->
+
+    <!-- 🔍 搜索引擎 -->
+    <div class="sec c-search rv" id="s0">
+      <div class="sec-hd" onclick="tog('s0')">
+        <span class="sec-label">🔍 搜索引擎</span>
+        <span class="sec-n">4 个</span>
+        <div class="sec-line"></div>
+        <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="sec-grid">
+        <a class="card" href="https://www.google.com" target="_blank" rel="noopener" data-n="Google" data-d="全球最大搜索引擎，快速精准"><span class="ca">↗</span><div class="ci">🌐</div><div class="ct"><div class="cn">Google</div><div class="cd">全球最大搜索引擎，快速精准</div></div></a>
+        <a class="card" href="https://www.baidu.com" target="_blank" rel="noopener" data-n="百度" data-d="国内最大中文搜索引擎"><span class="ca">↗</span><div class="ci">🔵</div><div class="ct"><div class="cn">百度</div><div class="cd">国内最大中文搜索引擎</div></div></a>
+        <a class="card" href="https://www.bing.com" target="_blank" rel="noopener" data-n="Bing" data-d="微软必应，支持 AI 对话搜索"><span class="ca">↗</span><div class="ci">🟦</div><div class="ct"><div class="cn">Bing</div><div class="cd">微软必应，支持 AI 对话搜索</div></div></a>
+        <a class="card" href="https://duckduckgo.com" target="_blank" rel="noopener" data-n="DuckDuckGo" data-d="注重隐私保护的搜索引擎"><span class="ca">↗</span><div class="ci">🦆</div><div class="ct"><div class="cn">DuckDuckGo</div><div class="cd">注重隐私保护的搜索引擎</div></div></a>
+      </div>
+    </div>
+
+    <!-- 🤖 AI 工具 -->
+    <div class="sec c-ai rv" id="s1">
+      <div class="sec-hd" onclick="tog('s1')">
+        <span class="sec-label">🤖 AI 工具</span>
+        <span class="sec-n">6 个</span>
+        <div class="sec-line"></div>
+        <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="sec-grid">
+        <a class="card" href="https://chat.openai.com" target="_blank" rel="noopener" data-n="ChatGPT" data-d="OpenAI 对话 AI，支持文字图像代码"><span class="ca">↗</span><div class="ci">💬</div><div class="ct"><div class="cn">ChatGPT</div><div class="cd">OpenAI 对话 AI，支持文字图像代码</div></div></a>
+        <a class="card" href="https://claude.ai" target="_blank" rel="noopener" data-n="Claude" data-d="Anthropic 出品，长文档理解精准"><span class="ca">↗</span><div class="ci">🔮</div><div class="ct"><div class="cn">Claude</div><div class="cd">Anthropic 出品，长文档理解精准</div></div></a>
+        <a class="card" href="https://gemini.google.com" target="_blank" rel="noopener" data-n="Gemini" data-d="Google 多模态 AI，整合 Google 服务"><span class="ca">↗</span><div class="ci">✨</div><div class="ct"><div class="cn">Gemini</div><div class="cd">Google 多模态 AI，整合 Google 服务</div></div></a>
+        <a class="card" href="https://www.perplexity.ai" target="_blank" rel="noopener" data-n="Perplexity" data-d="AI 驱动的实时搜索问答引擎"><span class="ca">↗</span><div class="ci">🧠</div><div class="ct"><div class="cn">Perplexity</div><div class="cd">AI 驱动的实时搜索问答引擎</div></div></a>
+        <a class="card" href="https://copilot.microsoft.com" target="_blank" rel="noopener" data-n="Copilot" data-d="微软 AI 助手，深度集成 Office"><span class="ca">↗</span><div class="ci">🪄</div><div class="ct"><div class="cn">Copilot</div><div class="cd">微软 AI 助手，深度集成 Office</div></div></a>
+        <a class="card" href="https://www.midjourney.com" target="_blank" rel="noopener" data-n="Midjourney" data-d="顶尖 AI 图像生成平台"><span class="ca">↗</span><div class="ci">🎨</div><div class="ct"><div class="cn">Midjourney</div><div class="cd">顶尖 AI 图像生成平台</div></div></a>
+      </div>
+    </div>
+
+    <!-- 💻 开发工具 -->
+    <div class="sec c-dev rv" id="s2">
+      <div class="sec-hd" onclick="tog('s2')">
+        <span class="sec-label">💻 开发工具</span>
+        <span class="sec-n">8 个</span>
+        <div class="sec-line"></div>
+        <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="sec-grid">
+        <a class="card" href="https://github.com" target="_blank" rel="noopener" data-n="GitHub" data-d="全球最大代码托管与协作平台"><span class="ca">↗</span><div class="ci">🐙</div><div class="ct"><div class="cn">GitHub</div><div class="cd">全球最大代码托管与协作平台</div></div></a>
+        <a class="card" href="https://stackoverflow.com" target="_blank" rel="noopener" data-n="Stack Overflow" data-d="全球最大编程问答社区"><span class="ca">↗</span><div class="ci">📚</div><div class="ct"><div class="cn">Stack Overflow</div><div class="cd">全球最大编程问答社区</div></div></a>
+        <a class="card" href="https://developer.mozilla.org" target="_blank" rel="noopener" data-n="MDN" data-d="Mozilla Web 技术权威文档"><span class="ca">↗</span><div class="ci">🦊</div><div class="ct"><div class="cn">MDN Web Docs</div><div class="cd">Mozilla Web 技术权威文档</div></div></a>
+        <a class="card" href="https://codepen.io" target="_blank" rel="noopener" data-n="CodePen" data-d="在线前端代码编辑与展示"><span class="ca">↗</span><div class="ci">🖊️</div><div class="ct"><div class="cn">CodePen</div><div class="cd">在线前端代码编辑与展示</div></div></a>
+        <a class="card" href="https://vercel.com" target="_blank" rel="noopener" data-n="Vercel" data-d="前端项目零配置极速部署"><span class="ca">↗</span><div class="ci">▲</div><div class="ct"><div class="cn">Vercel</div><div class="cd">前端项目零配置极速部署</div></div></a>
+        <a class="card" href="https://www.npmjs.com" target="_blank" rel="noopener" data-n="npm" data-d="Node.js 最大软件包管理仓库"><span class="ca">↗</span><div class="ci">📦</div><div class="ct"><div class="cn">npm</div><div class="cd">Node.js 最大软件包管理仓库</div></div></a>
+        <a class="card" href="https://caniuse.com" target="_blank" rel="noopener" data-n="Can I Use" data-d="浏览器 CSS/JS 特性兼容性查询"><span class="ca">↗</span><div class="ci">🌱</div><div class="ct"><div class="cn">Can I Use</div><div class="cd">浏览器 CSS/JS 特性兼容性查询</div></div></a>
+        <a class="card" href="https://regex101.com" target="_blank" rel="noopener" data-n="Regex101" data-d="正则表达式在线调试与测试"><span class="ca">↗</span><div class="ci">🔣</div><div class="ct"><div class="cn">Regex101</div><div class="cd">正则表达式在线调试与测试</div></div></a>
+      </div>
+    </div>
+
+    <!-- 💬 社交媒体 -->
+    <div class="sec c-social rv" id="s3">
+      <div class="sec-hd" onclick="tog('s3')">
+        <span class="sec-label">💬 社交媒体</span>
+        <span class="sec-n">6 个</span>
+        <div class="sec-line"></div>
+        <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="sec-grid">
+        <a class="card" href="https://x.com" target="_blank" rel="noopener" data-n="X Twitter" data-d="全球实时信息与社交平台"><span class="ca">↗</span><div class="ci">𝕏</div><div class="ct"><div class="cn">X (Twitter)</div><div class="cd">全球实时信息与社交平台</div></div></a>
+        <a class="card" href="https://www.youtube.com" target="_blank" rel="noopener" data-n="YouTube" data-d="全球最大视频平台"><span class="ca">↗</span><div class="ci">▶️</div><div class="ct"><div class="cn">YouTube</div><div class="cd">全球最大视频平台</div></div></a>
+        <a class="card" href="https://www.bilibili.com" target="_blank" rel="noopener" data-n="哔哩哔哩 B站" data-d="国内弹幕视频与创作者社区"><span class="ca">↗</span><div class="ci">📺</div><div class="ct"><div class="cn">哔哩哔哩</div><div class="cd">国内弹幕视频与创作者社区</div></div></a>
+        <a class="card" href="https://weibo.com" target="_blank" rel="noopener" data-n="微博" data-d="国内热门微博客社交平台"><span class="ca">↗</span><div class="ci">🐦</div><div class="ct"><div class="cn">微博</div><div class="cd">国内热门微博客社交平台</div></div></a>
+        <a class="card" href="https://www.zhihu.com" target="_blank" rel="noopener" data-n="知乎" data-d="中文知识问答与分享社区"><span class="ca">↗</span><div class="ci">💡</div><div class="ct"><div class="cn">知乎</div><div class="cd">中文知识问答与分享社区</div></div></a>
+        <a class="card" href="https://www.xiaohongshu.com" target="_blank" rel="noopener" data-n="小红书" data-d="生活方式与种草分享社区"><span class="ca">↗</span><div class="ci">📕</div><div class="ct"><div class="cn">小红书</div><div class="cd">生活方式与种草分享社区</div></div></a>
+      </div>
+    </div>
+
+    <!-- 📰 资讯阅读 -->
+    <div class="sec c-news rv" id="s4">
+      <div class="sec-hd" onclick="tog('s4')">
+        <span class="sec-label">📰 资讯阅读</span>
+        <span class="sec-n">6 个</span>
+        <div class="sec-line"></div>
+        <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="sec-grid">
+        <a class="card" href="https://news.ycombinator.com" target="_blank" rel="noopener" data-n="Hacker News" data-d="Y Combinator 科技创业资讯社区"><span class="ca">↗</span><div class="ci">🟠</div><div class="ct"><div class="cn">Hacker News</div><div class="cd">Y Combinator 科技创业资讯社区</div></div></a>
+        <a class="card" href="https://www.36kr.com" target="_blank" rel="noopener" data-n="36氪" data-d="国内领先科技与创投资讯媒体"><span class="ca">↗</span><div class="ci">🚀</div><div class="ct"><div class="cn">36氪</div><div class="cd">国内领先科技与创投资讯媒体</div></div></a>
+        <a class="card" href="https://sspai.com" target="_blank" rel="noopener" data-n="少数派" data-d="高质量数字生活方式媒体"><span class="ca">↗</span><div class="ci">⚡</div><div class="ct"><div class="cn">少数派</div><div class="cd">高质量数字生活方式媒体</div></div></a>
+        <a class="card" href="https://www.v2ex.com" target="_blank" rel="noopener" data-n="V2EX" data-d="创意工作者技术交流社区"><span class="ca">↗</span><div class="ci">🗨️</div><div class="ct"><div class="cn">V2EX</div><div class="cd">创意工作者技术交流社区</div></div></a>
+        <a class="card" href="https://juejin.cn" target="_blank" rel="noopener" data-n="掘金" data-d="开发者技术分享与学习社区"><span class="ca">↗</span><div class="ci">💎</div><div class="ct"><div class="cn">掘金</div><div class="cd">开发者技术分享与学习社区</div></div></a>
+        <a class="card" href="https://segmentfault.com" target="_blank" rel="noopener" data-n="SegmentFault 思否" data-d="中文编程技术问答与社区"><span class="ca">↗</span><div class="ci">🔧</div><div class="ct"><div class="cn">SegmentFault</div><div class="cd">中文编程技术问答与社区</div></div></a>
+      </div>
+    </div>
+
+    <!-- 🎨 设计资源 -->
+    <div class="sec c-design rv" id="s5">
+      <div class="sec-hd" onclick="tog('s5')">
+        <span class="sec-label">🎨 设计资源</span>
+        <span class="sec-n">6 个</span>
+        <div class="sec-line"></div>
+        <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="sec-grid">
+        <a class="card" href="https://www.figma.com" target="_blank" rel="noopener" data-n="Figma" data-d="协作式 UI/UX 设计工具首选"><span class="ca">↗</span><div class="ci">🖌️</div><div class="ct"><div class="cn">Figma</div><div class="cd">协作式 UI/UX 设计工具首选</div></div></a>
+        <a class="card" href="https://dribbble.com" target="_blank" rel="noopener" data-n="Dribbble" data-d="设计师作品展示与灵感社区"><span class="ca">↗</span><div class="ci">🏀</div><div class="ct"><div class="cn">Dribbble</div><div class="cd">设计师作品展示与灵感社区</div></div></a>
+        <a class="card" href="https://unsplash.com" target="_blank" rel="noopener" data-n="Unsplash" data-d="高品质免费商用图片资源库"><span class="ca">↗</span><div class="ci">📷</div><div class="ct"><div class="cn">Unsplash</div><div class="cd">高品质免费商用图片资源库</div></div></a>
+        <a class="card" href="https://www.iconfont.cn" target="_blank" rel="noopener" data-n="Iconfont 图标" data-d="阿里巴巴海量矢量图标库"><span class="ca">↗</span><div class="ci">🔠</div><div class="ct"><div class="cn">Iconfont</div><div class="cd">阿里巴巴海量矢量图标库</div></div></a>
+        <a class="card" href="https://coolors.co" target="_blank" rel="noopener" data-n="Coolors" data-d="智能配色方案快速生成工具"><span class="ca">↗</span><div class="ci">🎨</div><div class="ct"><div class="cn">Coolors</div><div class="cd">智能配色方案快速生成工具</div></div></a>
+        <a class="card" href="https://www.canva.com" target="_blank" rel="noopener" data-n="Canva" data-d="在线图形设计与创意平台"><span class="ca">↗</span><div class="ci">✏️</div><div class="ct"><div class="cn">Canva</div><div class="cd">在线图形设计与创意平台</div></div></a>
+      </div>
+    </div>
+
+    <!-- ⚙️ 效率工具 -->
+    <div class="sec c-tool rv" id="s6">
+      <div class="sec-hd" onclick="tog('s6')">
+        <span class="sec-label">⚙️ 效率工具</span>
+        <span class="sec-n">6 个</span>
+        <div class="sec-line"></div>
+        <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="sec-grid">
+        <a class="card" href="https://www.notion.so" target="_blank" rel="noopener" data-n="Notion" data-d="一体化笔记、文档与协作工具"><span class="ca">↗</span><div class="ci">📓</div><div class="ct"><div class="cn">Notion</div><div class="cd">一体化笔记、文档与协作工具</div></div></a>
+        <a class="card" href="https://trello.com" target="_blank" rel="noopener" data-n="Trello" data-d="看板式任务与项目管理工具"><span class="ca">↗</span><div class="ci">📋</div><div class="ct"><div class="cn">Trello</div><div class="cd">看板式任务与项目管理工具</div></div></a>
+        <a class="card" href="https://excalidraw.com" target="_blank" rel="noopener" data-n="Excalidraw" data-d="手绘风格轻量在线白板"><span class="ca">↗</span><div class="ci">✍️</div><div class="ct"><div class="cn">Excalidraw</div><div class="cd">手绘风格轻量在线白板</div></div></a>
+        <a class="card" href="https://carbon.now.sh" target="_blank" rel="noopener" data-n="Carbon 代码截图" data-d="代码片段美化截图生成工具"><span class="ca">↗</span><div class="ci">🌑</div><div class="ct"><div class="cn">Carbon</div><div class="cd">代码片段美化截图生成工具</div></div></a>
+        <a class="card" href="https://tinypng.com" target="_blank" rel="noopener" data-n="TinyPNG 压缩" data-d="在线 PNG/JPG 图片无损压缩"><span class="ca">↗</span><div class="ci">🐼</div><div class="ct"><div class="cn">TinyPNG</div><div class="cd">在线 PNG/JPG 图片无损压缩</div></div></a>
+        <a class="card" href="https://www.wolframalpha.com" target="_blank" rel="noopener" data-n="Wolfram Alpha" data-d="强大的计算知识引擎"><span class="ca">↗</span><div class="ci">🧮</div><div class="ct"><div class="cn">Wolfram Alpha</div><div class="cd">强大的计算知识引擎</div></div></a>
+      </div>
+    </div>
+
+    <!-- 🛒 购物出行 -->
+    <div class="sec c-shop rv" id="s7">
+      <div class="sec-hd" onclick="tog('s7')">
+        <span class="sec-label">🛒 购物出行</span>
+        <span class="sec-n">5 个</span>
+        <div class="sec-line"></div>
+        <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div class="sec-grid">
+        <a class="card" href="https://www.taobao.com" target="_blank" rel="noopener" data-n="淘宝" data-d="国内最大 C2C 网购平台"><span class="ca">↗</span><div class="ci">🛍️</div><div class="ct"><div class="cn">淘宝</div><div class="cd">国内最大 C2C 网购平台</div></div></a>
+        <a class="card" href="https://www.jd.com" target="_blank" rel="noopener" data-n="京东" data-d="自营正品快速配送电商"><span class="ca">↗</span><div class="ci">🏪</div><div class="ct"><div class="cn">京东</div><div class="cd">自营正品快速配送电商</div></div></a>
+        <a class="card" href="https://www.amazon.com" target="_blank" rel="noopener" data-n="Amazon" data-d="全球最大电商与云服务平台"><span class="ca">↗</span><div class="ci">📦</div><div class="ct"><div class="cn">Amazon</div><div class="cd">全球最大电商与云服务平台</div></div></a>
+        <a class="card" href="https://flights.google.com" target="_blank" rel="noopener" data-n="Google Flights 机票" data-d="全球机票搜索与比价工具"><span class="ca">↗</span><div class="ci">✈️</div><div class="ct"><div class="cn">Google Flights</div><div class="cd">全球机票搜索与比价工具</div></div></a>
+        <a class="card" href="https://www.booking.com" target="_blank" rel="noopener" data-n="Booking 酒店" data-d="全球酒店与住宿预订平台"><span class="ca">↗</span><div class="ci">🏨</div><div class="ct"><div class="cn">Booking</div><div class="cd">全球酒店与住宿预订平台</div></div></a>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty" id="emp">
+      <div class="empty-ico">🔍</div>
+      <p>没有找到匹配的网站</p>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="f-left">
+      <span>NavHub</span><span class="f-sep">·</span>
+      <span>8 分类 · 47 个网站</span>
+    </div>
+    <div class="f-tips">
+      <span>聚焦搜索</span><kbd>/</kbd>
+      <span style="margin-left:6px">退出</span><kbd>Esc</kbd>
+    </div>
+  </footer>
+
+</div><!-- .page -->
 
 <script>
-const { createApp, ref, onMounted, watch } = Vue;
+// ── Theme toggle ─────────────────────────────
+(function(){
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  if(theme === 'light') document.documentElement.setAttribute('data-theme','light');
+})();
 
-createApp({
-  setup() {
-    // 网站数据
-    const sites = ref([
-      {
-        name: '今日热榜',
-        url: 'https://tophub.today',
-        icon: 'fa-solid fa-fire',
-        iconColor: 'text-orange-500',
-        description: '新闻资讯聚合的网站'
-      },
-      {
-        name: 'NesNow',
-        url: 'https://newsnow.busiyi.world',
-        icon: 'fa-solid fa-newspaper',
-        iconColor: 'text-blue-500',
-        description: '新闻资讯聚合的网站'
-      },
-      {
-        name: 'InfoQ 技术网站',
-        url: 'https://www.infoq.cn',
-        icon: 'fa-solid fa-laptop-code',
-        iconColor: 'text-teal-500',
-        description: '互联网资讯技术网站'
-      },
-      {
-        name: '阮一峰博客',
-        url: 'https://www.ruanyifeng.com/blog',
-        icon: 'fa-solid fa-book-open',
-        iconColor: 'text-purple-500',
-        description: '技术博客和技术周刊'
-      },
-      {
-        name: 'HelloGithub',
-        url: 'https://hellogithub.com',
-        icon: 'fa-brands fa-github',
-        iconColor: 'text-yellow-500',
-        description: 'Github 有趣的项目和软件'
-      },
-      {
-        name: '博客园',
-        url: 'https://www.cnblogs.com',
-        icon: 'fa-solid fa-rss',
-        iconColor: 'text-blue-600',
-        description: '中国技术博客网站'
-      }
-    ]);
-
-    // 暗色模式切换
-    const toggleDarkMode = () => {
-      document.documentElement.classList.toggle('dark');
-      const isDark = document.documentElement.classList.contains('dark');
-      localStorage.setItem('waterink-mode', isDark ? 'dark' : 'light');
-    };
-
-    // 初始化暗色模式
-    onMounted(() => {
-      const saved = localStorage.getItem('waterink-mode');
-      if (saved === 'dark') {
-        document.documentElement.classList.add('dark');
-      }
-    });
-
-    return {
-      sites,
-      toggleDarkMode
-    };
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  if(isLight){
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('theme','dark');
+  } else {
+    document.documentElement.setAttribute('data-theme','light');
+    localStorage.setItem('theme','light');
   }
-}).mount('#app');
+});
+
+// ── Section toggle ──────────────────────────
+function tog(id){ document.getElementById(id).classList.toggle('collapsed') }
+
+// ── Search ──────────────────────────────────
+const sq   = document.getElementById('sq');
+const sb   = document.getElementById('sb');
+const sc   = document.getElementById('sc');
+const emp  = document.getElementById('emp');
+const secs = document.querySelectorAll('.sec');
+
+function filter(){
+  const q = sq.value.trim().toLowerCase();
+  sb.classList.toggle('hasval', q.length > 0);
+  let total = 0;
+  secs.forEach(sec => {
+    const cards = sec.querySelectorAll('.card');
+    let vis = 0;
+    cards.forEach(c => {
+      const match = !q || (c.dataset.n||'').toLowerCase().includes(q) || (c.dataset.d||'').toLowerCase().includes(q);
+      c.style.display = match ? '' : 'none';
+      if(match) vis++;
+    });
+    total += vis;
+    if(q) sec.classList.toggle('collapsed', vis === 0);
+    sec.style.display = '';
+  });
+  emp.classList.toggle('show', q.length > 0 && total === 0);
+}
+
+sq.addEventListener('input', filter);
+sc.addEventListener('click', () => { sq.value=''; filter(); sq.focus(); });
+
+document.addEventListener('keydown', e => {
+  if(e.key==='/' && document.activeElement!==sq){ e.preventDefault(); sq.focus(); sq.select(); }
+  if(e.key==='Escape' && document.activeElement===sq){ sq.value=''; filter(); sq.blur(); }
+});
+
+// ── Ripple ──────────────────────────────────
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('click', e => {
+    const r = card.getBoundingClientRect();
+    const sz = Math.max(r.width, r.height);
+    const rpl = document.createElement('span');
+    rpl.className = 'rpl';
+    Object.assign(rpl.style, {
+      width: sz+'px', height: sz+'px',
+      left: (e.clientX-r.left-sz/2)+'px',
+      top:  (e.clientY-r.top -sz/2)+'px',
+    });
+    card.appendChild(rpl);
+    rpl.addEventListener('animationend', () => rpl.remove());
+  });
+});
+
+// ── Scroll reveal ────────────────────────────
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => { if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+}, { threshold: 0.07 });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
 </script>
 </body>
 </html>
