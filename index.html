@@ -4,90 +4,43 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>网址导航</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════
-   Reset & Design Tokens
+   Reset & Design Tokens (Figma-inspired)
 ══════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-/* ── Dark theme (default) ── */
 :root{
-  --bg:       #07080f;
-  --bg2:      #0d0f1a;
-  --glass:    rgba(255,255,255,0.042);
-  --glass-h:  rgba(255,255,255,0.075);
-  --bd:       rgba(255,255,255,0.07);
-  --bd-h:     rgba(255,255,255,0.16);
-  --t1:       #eef0ff;
-  --t2:       #7b80a8;
-  --t3:       #3a3d56;
-  --accent:   #6366f1;
-  --nav-bg:   rgba(7,8,15,.72);
-  --card-shimmer: rgba(255,255,255,.11);
-  --card-glow:    rgba(255,255,255,.055);
-  --rpl-bg:   rgba(255,255,255,.07);
-  --cn-hover: #ffffff;
-  --blur:     saturate(160%) blur(18px);
-  --r:        18px;
-  --rs:       11px;
-  --ease:     cubic-bezier(.4,0,.2,1);
-  --spd:      .22s;
+  --black:#000000;
+  --white:#ffffff;
+  --gray-80:rgba(0,0,0,0.80);
+  --glass-dark:rgba(0,0,0,0.08);
+  --glass-light:rgba(255,255,255,0.16);
+  --border:rgba(0,0,0,0.10);
+  --border-hover:#000000;
+  --radius-sm:6px;
+  --radius-md:8px;
+  --radius-pill:50px;
+  --font-sans:'Inter','PingFang SC','Hiragino Sans GB',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','SF Mono',Menlo,monospace;
+  --ease:cubic-bezier(.4,0,.2,1);
+  --spd:.22s;
 }
 
-/* ── Light theme ── */
-html[data-theme="light"]{
-  --bg:       #f4f5fb;
-  --bg2:      #eaecf5;
-  --glass:    rgba(255,255,255,0.72);
-  --glass-h:  rgba(255,255,255,0.90);
-  --bd:       rgba(99,102,241,0.12);
-  --bd-h:     rgba(99,102,241,0.30);
-  --t1:       #1a1d2e;
-  --t2:       #5c6080;
-  --t3:       #9ca3c4;
-  --accent:   #6366f1;
-  --nav-bg:   rgba(244,245,251,.82);
-  --card-shimmer: rgba(99,102,241,.10);
-  --card-glow:    rgba(99,102,241,.04);
-  --rpl-bg:   rgba(99,102,241,.10);
-  --cn-hover: #1a1d2e;
-}
-
-html{color-scheme:dark;scroll-behavior:smooth}
-html[data-theme="light"]{color-scheme:light}
-
-/* ── Theme transition ── */
-body,body *{transition-property:background,background-color,border-color,color,box-shadow,opacity;
-            transition-duration:.3s;transition-timing-function:var(--ease);}
-/* but keep transform / layout transitions at original speed */
-.card,.ci,.rv,.sec-chevron,.ca{transition-duration:.22s!important}
+html{font-feature-settings:"kern" 1;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
 body{
-  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter','PingFang SC','Hiragino Sans GB',sans-serif;
-  background:var(--bg);color:var(--t1);
-  min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  font-family:var(--font-sans);font-weight:330;font-size:16px;
+  letter-spacing:-0.14px;line-height:1.45;
+  background:var(--white);color:var(--black);
+  min-height:100vh;overflow-x:hidden;
 }
 
-/* ══════════════════════════════════════════
-   Ambient orbs
-══════════════════════════════════════════ */
-#ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.orb{position:absolute;border-radius:50%;filter:blur(110px);will-change:transform}
-.o1{width:720px;height:720px;top:-220px;left:-180px;
-    background:radial-gradient(circle,rgba(99,102,241,.25),transparent 68%);
-    animation:drift1 24s var(--ease) infinite alternate}
-.o2{width:580px;height:580px;top:-80px;right:-160px;
-    background:radial-gradient(circle,rgba(139,92,246,.18),transparent 68%);
-    animation:drift2 19s var(--ease) infinite alternate}
-.o3{width:460px;height:460px;bottom:-60px;left:35%;
-    background:radial-gradient(circle,rgba(59,130,246,.14),transparent 68%);
-    animation:drift3 28s var(--ease) infinite alternate}
-
-html[data-theme="light"] .o1{background:radial-gradient(circle,rgba(99,102,241,.10),transparent 68%)}
-html[data-theme="light"] .o2{background:radial-gradient(circle,rgba(139,92,246,.08),transparent 68%)}
-html[data-theme="light"] .o3{background:radial-gradient(circle,rgba(59,130,246,.07),transparent 68%)}
-@keyframes drift1{to{transform:translate(50px,35px) scale(1.07)}}
-@keyframes drift2{to{transform:translate(-40px,25px) scale(1.1)}}
-@keyframes drift3{to{transform:translate(30px,-30px) scale(1.06)}}
+/* ── Focus: dashed 2px (Figma signature) ── */
+:focus-visible{outline:2px dashed var(--black);outline-offset:2px}
+button:focus:not(:focus-visible),a:focus:not(:focus-visible){outline:none}
 
 /* ══════════════════════════════════════════
    Navbar
@@ -96,81 +49,54 @@ html[data-theme="light"] .o3{background:radial-gradient(circle,rgba(59,130,246,.
   position:sticky;top:0;z-index:200;
   height:58px;display:flex;align-items:center;justify-content:space-between;
   padding:0 32px;
-  background:var(--nav-bg);
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-  border-bottom:1px solid var(--bd);
+  background:var(--white);
+  border-bottom:1px solid var(--border);
 }
-.nav-brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--t1)}
+.nav-brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--black)}
 .nav-mark{
-  width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:14px;
-  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  width:28px;height:28px;border-radius:var(--radius-md);display:grid;place-items:center;
+  font-size:14px;font-weight:700;background:var(--black);color:var(--white);
+  font-family:var(--font-mono);
 }
-.nav-name{font-size:.84rem;font-weight:700;letter-spacing:.05em}
+.nav-name{font-family:var(--font-mono);font-size:.84rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
 .nav-stat{
   display:flex;align-items:center;gap:7px;
-  padding:4px 13px;border-radius:100px;
-  border:1px solid var(--bd);background:var(--glass);
-  backdrop-filter:blur(8px);font-size:.73rem;color:var(--t2);
+  padding:4px 13px;border-radius:var(--radius-pill);
+  border:1px solid var(--border);
+  font-family:var(--font-mono);font-size:.73rem;color:var(--gray-80);
 }
-
-/* ── Theme toggle button ── */
-.theme-btn{
-  display:flex;align-items:center;justify-content:center;
-  width:36px;height:36px;border-radius:50%;
-  border:1px solid var(--bd);
-  background:var(--glass);
-  backdrop-filter:blur(8px);
-  cursor:pointer;color:var(--t2);
-  transition:color var(--spd),border-color var(--spd),background var(--spd),transform var(--spd);
-  flex-shrink:0;
-}
-.theme-btn:hover{color:var(--t1);border-color:var(--bd-h);transform:rotate(20deg)}
-.theme-btn .icon-sun,.theme-btn .icon-moon{
-  position:absolute;transition:opacity .25s var(--ease),transform .3s var(--ease);
-}
-.theme-btn{position:relative}
-/* dark mode shows moon, light shows sun */
-html:not([data-theme="light"]) .theme-btn .icon-sun{opacity:0;transform:scale(.6) rotate(-90deg)}
-html:not([data-theme="light"]) .theme-btn .icon-moon{opacity:1;transform:scale(1) rotate(0)}
-html[data-theme="light"] .theme-btn .icon-sun{opacity:1;transform:scale(1) rotate(0)}
-html[data-theme="light"] .theme-btn .icon-moon{opacity:0;transform:scale(.6) rotate(90deg)}
 .live-dot{
-  width:6px;height:6px;border-radius:50%;background:#22c55e;
-  box-shadow:0 0 7px rgba(34,197,94,.9);
+  width:6px;height:6px;border-radius:50%;background:var(--black);
   animation:livepulse 2.2s ease infinite;
 }
 @keyframes livepulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* ══════════════════════════════════════════
-   Page wrapper
+   Hero (vibrant gradient section)
 ══════════════════════════════════════════ */
-.page{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 28px 100px}
-
-/* ══════════════════════════════════════════
-   Hero
-══════════════════════════════════════════ */
+.hero-wrap{
+  background:linear-gradient(135deg,#a3f7bf 0%,#fef08a 25%,#a78bfa 60%,#f472b6 100%);
+  padding:80px 28px 64px;
+}
 .hero{
   display:flex;flex-direction:column;align-items:center;text-align:center;
-  padding:80px 0 56px;gap:18px;
+  max-width:1200px;margin:0 auto;gap:18px;
 }
 .hero-tag{
   display:inline-flex;align-items:center;gap:7px;
-  padding:5px 15px;border-radius:100px;
-  border:1px solid rgba(99,102,241,.28);
-  background:rgba(99,102,241,.08);
-  font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
-  color:#a5b4fc;
+  padding:5px 15px;border-radius:var(--radius-pill);
+  background:rgba(255,255,255,0.24);
+  font-family:var(--font-mono);font-size:12px;font-weight:400;
+  letter-spacing:.6px;text-transform:uppercase;color:var(--black);
 }
 .hero h1{
-  font-size:clamp(2.2rem,5.5vw,4rem);font-weight:800;
-  letter-spacing:-.04em;line-height:1.08;
+  font-size:clamp(2.6rem,5.5vw,5.38rem);font-weight:400;
+  letter-spacing:-1.72px;line-height:1.0;color:var(--black);
 }
-.hero h1 em{
-  font-style:normal;
-  background:linear-gradient(125deg,#c4b5fd 0%,#818cf8 30%,#38bdf8 65%,#67e8f9 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+.hero-sub{
+  font-size:20px;font-weight:330;color:var(--gray-80);
+  max-width:480px;line-height:1.30;letter-spacing:-0.14px;
 }
-.hero-sub{font-size:.98rem;color:var(--t2);max-width:440px;line-height:1.68}
 
 /* ══════════════════════════════════════════
    Search
@@ -178,39 +104,39 @@ html[data-theme="light"] .theme-btn .icon-moon{opacity:0;transform:scale(.6) rot
 .search-box{width:100%;max-width:560px;position:relative;margin-top:6px}
 .search-box input{
   width:100%;height:54px;padding:0 54px 0 50px;
-  border-radius:100px;border:1px solid var(--bd);
-  background:var(--glass);
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-  color:var(--t1);font-size:.93rem;outline:none;
-  transition:border-color var(--spd) var(--ease),
-             box-shadow   var(--spd) var(--ease),
-             background   var(--spd) var(--ease);
-  caret-color:var(--accent);
+  border-radius:var(--radius-pill);border:1px solid var(--black);
+  background:rgba(255,255,255,0.48);
+  color:var(--black);font-family:var(--font-sans);font-size:.93rem;font-weight:330;
+  letter-spacing:-0.14px;outline:none;
+  transition:background var(--spd) var(--ease),box-shadow var(--spd) var(--ease);
 }
-.search-box input::placeholder{color:var(--t3)}
+.search-box input::placeholder{color:var(--gray-80)}
 .search-box input:focus{
-  border-color:rgba(99,102,241,.55);
-  background:var(--glass-h);
-  box-shadow:0 0 0 4px rgba(99,102,241,.13),0 8px 32px rgba(0,0,0,.2);
+  background:rgba(255,255,255,0.72);
+  box-shadow:0 4px 24px rgba(0,0,0,.08);
 }
-.si{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;display:flex}
+.si{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:var(--black);pointer-events:none;display:flex}
 .sk{
   position:absolute;right:17px;top:50%;transform:translateY(-50%);
   display:flex;align-items:center;gap:3px;pointer-events:none;
 }
 .sk kbd{
-  font-family:inherit;font-size:.67rem;color:var(--t3);
-  background:var(--glass);border:1px solid var(--bd);
+  font-family:var(--font-mono);font-size:.67rem;color:var(--gray-80);
+  background:rgba(255,255,255,0.32);border:1px solid rgba(0,0,0,0.15);
   border-radius:5px;padding:2px 6px;
 }
 .sc{
   display:none;position:absolute;right:15px;top:50%;transform:translateY(-50%);
-  background:none;border:none;cursor:pointer;color:var(--t3);padding:4px;
-  border-radius:50%;line-height:0;transition:color var(--spd);
+  background:none;border:none;cursor:pointer;color:var(--black);padding:4px;
+  border-radius:50%;line-height:0;transition:opacity var(--spd);
 }
-.sc:hover{color:var(--t2)}
+.sc:hover{opacity:.6}
 .search-box.hasval .sk{display:none}
 .search-box.hasval .sc{display:flex}
+/* ══════════════════════════════════════════
+   Page wrapper
+══════════════════════════════════════════ */
+.page{position:relative;max-width:1200px;margin:0 auto;padding:0 28px 100px}
 
 /* ══════════════════════════════════════════
    Section
@@ -220,18 +146,15 @@ html[data-theme="light"] .theme-btn .icon-moon{opacity:0;transform:scale(.6) rot
   display:flex;align-items:center;gap:11px;
   margin-bottom:18px;cursor:pointer;user-select:none;
 }
-.sec-hd:hover .sec-label{border-color:var(--bd-h)}
 .sec-label{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:5px 14px;border-radius:100px;
-  font-size:.78rem;font-weight:700;letter-spacing:.025em;
-  border:1px solid transparent;
-  transition:border-color var(--spd),background var(--spd);
+  font-family:var(--font-mono);font-size:18px;font-weight:400;
+  letter-spacing:.54px;text-transform:uppercase;color:var(--black);
+  padding:0;border:none;background:none;
 }
-.sec-n{font-size:.73rem;color:var(--t3)}
-.sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--bd),transparent)}
-.sec-chevron{color:var(--t3);line-height:0;transition:transform var(--spd) var(--ease),color var(--spd);flex-shrink:0}
-.sec-hd:hover .sec-chevron{color:var(--t2)}
+.sec-n{font-family:var(--font-mono);font-size:12px;letter-spacing:.6px;color:var(--gray-80);text-transform:uppercase}
+.sec-line{flex:1;height:1px;background:var(--border)}
+.sec-chevron{color:var(--gray-80);line-height:0;transition:transform var(--spd) var(--ease),color var(--spd);flex-shrink:0}
+.sec-hd:hover .sec-chevron{color:var(--black)}
 .sec.collapsed .sec-chevron{transform:rotate(-90deg)}
 .sec-grid{
   display:grid;
@@ -240,96 +163,41 @@ html[data-theme="light"] .theme-btn .icon-moon{opacity:0;transform:scale(.6) rot
 }
 .sec.collapsed .sec-grid{display:none}
 
-/* Category colors */
-.c-search .sec-label{background:rgba(99,102,241,.10);border-color:rgba(99,102,241,.18);color:#a5b4fc}
-.c-ai     .sec-label{background:rgba(139,92,246,.10);border-color:rgba(139,92,246,.18);color:#c4b5fd}
-.c-dev    .sec-label{background:rgba(16,185,129,.09);border-color:rgba(16,185,129,.18);color:#6ee7b7}
-.c-social .sec-label{background:rgba(244,114,182,.09);border-color:rgba(244,114,182,.18);color:#f9a8d4}
-.c-news   .sec-label{background:rgba(251,146,60,.09);border-color:rgba(251,146,60,.18);color:#fcd34d}
-.c-design .sec-label{background:rgba(236,72,153,.09);border-color:rgba(236,72,153,.18);color:#f0abfc}
-.c-tool   .sec-label{background:rgba(14,165,233,.09);border-color:rgba(14,165,233,.18);color:#7dd3fc}
-.c-shop   .sec-label{background:rgba(245,158,11,.09);border-color:rgba(245,158,11,.18);color:#fde68a}
-
-/* Icon bg per category */
-.c-search .ci{background:rgba(99,102,241,.13)}
-.c-ai     .ci{background:rgba(139,92,246,.13)}
-.c-dev    .ci{background:rgba(16,185,129,.11)}
-.c-social .ci{background:rgba(244,114,182,.11)}
-.c-news   .ci{background:rgba(251,146,60,.11)}
-.c-design .ci{background:rgba(236,72,153,.11)}
-.c-tool   .ci{background:rgba(14,165,233,.11)}
-.c-shop   .ci{background:rgba(245,158,11,.11)}
-
-/* Hover shadow per category — dark */
-.c-search .card:hover{box-shadow:0 14px 48px rgba(99,102,241,.22),0 2px 8px rgba(0,0,0,.5)}
-.c-ai     .card:hover{box-shadow:0 14px 48px rgba(139,92,246,.22),0 2px 8px rgba(0,0,0,.5)}
-.c-dev    .card:hover{box-shadow:0 14px 48px rgba(16,185,129,.18),0 2px 8px rgba(0,0,0,.5)}
-.c-social .card:hover{box-shadow:0 14px 48px rgba(244,114,182,.18),0 2px 8px rgba(0,0,0,.5)}
-.c-news   .card:hover{box-shadow:0 14px 48px rgba(251,146,60,.18),0 2px 8px rgba(0,0,0,.5)}
-.c-design .card:hover{box-shadow:0 14px 48px rgba(236,72,153,.18),0 2px 8px rgba(0,0,0,.5)}
-.c-tool   .card:hover{box-shadow:0 14px 48px rgba(14,165,233,.18),0 2px 8px rgba(0,0,0,.5)}
-.c-shop   .card:hover{box-shadow:0 14px 48px rgba(245,158,11,.18),0 2px 8px rgba(0,0,0,.5)}
-
-/* Hover shadow per category — light (softer) */
-html[data-theme="light"] .c-search .card:hover{box-shadow:0 10px 40px rgba(99,102,241,.18),0 2px 8px rgba(0,0,0,.08)}
-html[data-theme="light"] .c-ai     .card:hover{box-shadow:0 10px 40px rgba(139,92,246,.18),0 2px 8px rgba(0,0,0,.08)}
-html[data-theme="light"] .c-dev    .card:hover{box-shadow:0 10px 40px rgba(16,185,129,.16),0 2px 8px rgba(0,0,0,.08)}
-html[data-theme="light"] .c-social .card:hover{box-shadow:0 10px 40px rgba(244,114,182,.16),0 2px 8px rgba(0,0,0,.08)}
-html[data-theme="light"] .c-news   .card:hover{box-shadow:0 10px 40px rgba(251,146,60,.16),0 2px 8px rgba(0,0,0,.08)}
-html[data-theme="light"] .c-design .card:hover{box-shadow:0 10px 40px rgba(236,72,153,.16),0 2px 8px rgba(0,0,0,.08)}
-html[data-theme="light"] .c-tool   .card:hover{box-shadow:0 10px 40px rgba(14,165,233,.16),0 2px 8px rgba(0,0,0,.08)}
-html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,158,11,.16),0 2px 8px rgba(0,0,0,.08)}
-
 /* ══════════════════════════════════════════
-   Card (glassmorphism)
+   Card
 ══════════════════════════════════════════ */
 .card{
   position:relative;display:flex;flex-direction:column;gap:13px;
-  padding:20px 18px;border-radius:var(--r);
-  border:1px solid var(--bd);
-  background:var(--glass);
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  padding:20px 18px;border-radius:var(--radius-md);
+  border:1px solid var(--border);
+  background:var(--white);
   text-decoration:none;color:inherit;overflow:hidden;cursor:pointer;
   transition:transform var(--spd) var(--ease),
-             box-shadow var(--spd) var(--ease),
              border-color var(--spd) var(--ease),
-             background var(--spd) var(--ease);
-  will-change:transform;
+             box-shadow var(--spd) var(--ease);
 }
-/* top shimmer line */
-.card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent 0%,var(--card-shimmer) 50%,transparent 100%);
+.card:hover{
+  transform:translateY(-2px);
+  border-color:var(--border-hover);
+  box-shadow:0 4px 16px rgba(0,0,0,.06);
 }
-/* inner radial glow on hover */
-.card::after{
-  content:'';position:absolute;inset:0;pointer-events:none;border-radius:var(--r);
-  background:radial-gradient(ellipse at 50% -10%,var(--card-glow),transparent 60%);
-  opacity:0;transition:opacity var(--spd) var(--ease);
-}
-.card:hover{transform:translateY(-6px) scale(1.015);border-color:var(--bd-h);background:var(--glass-h)}
-.card:hover::after{opacity:1}
-.card:active{transform:translateY(-2px) scale(1)}
+.card:active{transform:translateY(0)}
 
-/* card icon */
 .ci{
-  width:44px;height:44px;border-radius:var(--rs);
+  width:44px;height:44px;border-radius:var(--radius-md);
   display:grid;place-items:center;font-size:21px;
-  border:1px solid var(--bd);flex-shrink:0;
+  background:var(--glass-dark);flex-shrink:0;
   transition:transform var(--spd) var(--ease);
 }
-.card:hover .ci{transform:scale(1.12) rotate(-4deg)}
+.card:hover .ci{transform:scale(1.08)}
 .ci img{width:24px;height:24px;border-radius:4px;object-fit:contain}
 
-/* card text */
 .ct{display:flex;flex-direction:column;gap:4px}
-.cn{font-size:.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t1);transition:color var(--spd)}
-.card:hover .cn{color:var(--cn-hover)}
-.cd{font-size:.75rem;line-height:1.48;color:var(--t2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cn{font-size:16px;font-weight:700;letter-spacing:normal;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--black)}
+.cd{font-size:14px;font-weight:330;line-height:1.40;letter-spacing:-0.14px;color:var(--gray-80);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
-/* external link arrow */
 .ca{
-  position:absolute;top:13px;right:13px;color:var(--accent);line-height:0;
+  position:absolute;top:13px;right:13px;color:var(--black);line-height:0;
   opacity:0;transform:translate(-4px,4px);
   transition:opacity var(--spd) var(--ease),transform var(--spd) var(--ease);
 }
@@ -338,7 +206,7 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
 /* ripple */
 .rpl{
   position:absolute;border-radius:50%;
-  background:var(--rpl-bg);
+  background:var(--glass-dark);
   transform:scale(0);
   animation:rplout .5s var(--ease) forwards;
   pointer-events:none;
@@ -350,33 +218,34 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
 ══════════════════════════════════════════ */
 .empty{
   display:none;flex-direction:column;align-items:center;gap:14px;
-  padding:72px 0;color:var(--t3);
+  padding:72px 0;color:var(--gray-80);
 }
 .empty.show{display:flex}
 .empty-ico{
-  width:52px;height:52px;border-radius:14px;
-  background:var(--glass);border:1px solid var(--bd);
+  width:52px;height:52px;border-radius:var(--radius-md);
+  background:var(--glass-dark);
   display:grid;place-items:center;font-size:24px;opacity:.5;
 }
-.empty p{font-size:.86rem}
+.empty p{font-size:.86rem;font-weight:330}
 
 /* ══════════════════════════════════════════
    Footer
 ══════════════════════════════════════════ */
 .footer{
   margin-top:60px;padding-top:26px;
-  border-top:1px solid var(--bd);
+  border-top:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;
   flex-wrap:wrap;gap:10px;
-  font-size:.76rem;color:var(--t3);
+  font-size:12px;font-family:var(--font-mono);letter-spacing:.6px;
+  text-transform:uppercase;color:var(--gray-80);
 }
 .f-left{display:flex;align-items:center;gap:6px}
-.f-sep{color:var(--t3)}
+.f-sep{color:var(--gray-80)}
 .f-tips{display:flex;align-items:center;gap:8px}
 .f-tips kbd{
-  font-family:inherit;font-size:.68rem;
-  background:var(--glass);border:1px solid var(--bd);
-  border-radius:5px;padding:2px 6px;color:var(--t2);
+  font-family:var(--font-mono);font-size:11px;
+  background:var(--glass-dark);border:1px solid var(--border);
+  border-radius:5px;padding:2px 6px;color:var(--black);
 }
 
 /* ══════════════════════════════════════════
@@ -398,7 +267,9 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
 @media(max-width:768px){
   .page{padding:0 16px 80px}
   .nav{padding:0 16px}
-  .hero{padding:56px 0 40px}
+  .hero-wrap{padding:56px 16px 40px}
+  .hero h1{letter-spacing:-0.96px}
+  .sec-label{font-size:14px}
   .sec-grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
   .card{padding:16px 14px}
   .footer{justify-content:center;text-align:center}
@@ -410,45 +281,26 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
 </head>
 <body>
 
-<div id="ambient" aria-hidden="true">
-  <div class="orb o1"></div>
-  <div class="orb o2"></div>
-  <div class="orb o3"></div>
-</div>
-
 <!-- ── Navbar ── -->
 <nav class="nav">
   <a class="nav-brand" href="#">
-    <div class="nav-mark">🧭</div>
+    <div class="nav-mark">N</div>
     <span class="nav-name">NavHub</span>
   </a>
-  <div style="display:flex;align-items:center;gap:10px">
-    <div class="nav-stat">
-      <span class="live-dot"></span>
-      8 分类 · 50+ 网站
-    </div>
-    <button class="theme-btn" id="themeBtn" title="切换主题" aria-label="切换明暗主题">
-      <!-- sun -->
-      <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-      </svg>
-      <!-- moon -->
-      <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
-    </button>
+  <div class="nav-stat">
+    <span class="live-dot"></span>
+    8 分类 · 50+ 网站
   </div>
 </nav>
 
-<div class="page">
-
-  <!-- ── Hero ── -->
+<!-- ── Hero (gradient wrap) ── -->
+<div class="hero-wrap">
   <section class="hero">
     <div class="hero-tag">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
       Your Personal Navigator
     </div>
-    <h1><em>智能网址导航</em><br/>一站直达所有工具</h1>
+    <h1>智能网址导航<br/>一站直达所有工具</h1>
     <p class="hero-sub">精选搜索引擎、AI 助手、开发利器与日常网站，让每一次上网高效又优雅</p>
 
     <div class="search-box" id="sb">
@@ -462,17 +314,17 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
       </button>
     </div>
   </section>
+</div>
 
+<div class="page">
   <!-- ── Content ── -->
-  <main id="mc">
+  <main id="mc" style="padding-top:48px">
 
-    <!-- SVG arrow shared snippet (inline via JS) — defined once -->
-
-    <!-- 🔍 搜索引擎 -->
-    <div class="sec c-search rv" id="s0">
+    <!-- 01 搜索引擎 -->
+    <div class="sec rv" id="s0">
       <div class="sec-hd" onclick="tog('s0')">
-        <span class="sec-label">🔍 搜索引擎</span>
-        <span class="sec-n">4 个</span>
+        <span class="sec-label">01 / 搜索引擎</span>
+        <span class="sec-n">4 sites</span>
         <div class="sec-line"></div>
         <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
       </div>
@@ -484,11 +336,11 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
       </div>
     </div>
 
-    <!-- 🤖 AI 工具 -->
-    <div class="sec c-ai rv" id="s1">
+    <!-- 02 AI 工具 -->
+    <div class="sec rv" id="s1">
       <div class="sec-hd" onclick="tog('s1')">
-        <span class="sec-label">🤖 AI 工具</span>
-        <span class="sec-n">6 个</span>
+        <span class="sec-label">02 / AI 工具</span>
+        <span class="sec-n">6 sites</span>
         <div class="sec-line"></div>
         <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
       </div>
@@ -502,11 +354,11 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
       </div>
     </div>
 
-    <!-- 💻 开发工具 -->
-    <div class="sec c-dev rv" id="s2">
+    <!-- 03 开发工具 -->
+    <div class="sec rv" id="s2">
       <div class="sec-hd" onclick="tog('s2')">
-        <span class="sec-label">💻 开发工具</span>
-        <span class="sec-n">8 个</span>
+        <span class="sec-label">03 / 开发工具</span>
+        <span class="sec-n">8 sites</span>
         <div class="sec-line"></div>
         <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
       </div>
@@ -522,11 +374,11 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
       </div>
     </div>
 
-    <!-- 💬 社交媒体 -->
-    <div class="sec c-social rv" id="s3">
+    <!-- 04 社交媒体 -->
+    <div class="sec rv" id="s3">
       <div class="sec-hd" onclick="tog('s3')">
-        <span class="sec-label">💬 社交媒体</span>
-        <span class="sec-n">6 个</span>
+        <span class="sec-label">04 / 社交媒体</span>
+        <span class="sec-n">6 sites</span>
         <div class="sec-line"></div>
         <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
       </div>
@@ -540,11 +392,11 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
       </div>
     </div>
 
-    <!-- 📰 资讯阅读 -->
-    <div class="sec c-news rv" id="s4">
+    <!-- 05 资讯阅读 -->
+    <div class="sec rv" id="s4">
       <div class="sec-hd" onclick="tog('s4')">
-        <span class="sec-label">📰 资讯阅读</span>
-        <span class="sec-n">6 个</span>
+        <span class="sec-label">05 / 资讯阅读</span>
+        <span class="sec-n">6 sites</span>
         <div class="sec-line"></div>
         <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
       </div>
@@ -558,11 +410,11 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
       </div>
     </div>
 
-    <!-- 🎨 设计资源 -->
-    <div class="sec c-design rv" id="s5">
+    <!-- 06 设计资源 -->
+    <div class="sec rv" id="s5">
       <div class="sec-hd" onclick="tog('s5')">
-        <span class="sec-label">🎨 设计资源</span>
-        <span class="sec-n">6 个</span>
+        <span class="sec-label">06 / 设计资源</span>
+        <span class="sec-n">6 sites</span>
         <div class="sec-line"></div>
         <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
       </div>
@@ -576,11 +428,11 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
       </div>
     </div>
 
-    <!-- ⚙️ 效率工具 -->
-    <div class="sec c-tool rv" id="s6">
+    <!-- 07 效率工具 -->
+    <div class="sec rv" id="s6">
       <div class="sec-hd" onclick="tog('s6')">
-        <span class="sec-label">⚙️ 效率工具</span>
-        <span class="sec-n">6 个</span>
+        <span class="sec-label">07 / 效率工具</span>
+        <span class="sec-n">6 sites</span>
         <div class="sec-line"></div>
         <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
       </div>
@@ -593,12 +445,11 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
         <a class="card" href="https://www.wolframalpha.com" target="_blank" rel="noopener" data-n="Wolfram Alpha" data-d="强大的计算知识引擎"><span class="ca">↗</span><div class="ci"><img src="https://www.google.com/s2/favicons?domain=wolframalpha.com&sz=64" alt="Wolfram Alpha"></div><div class="ct"><div class="cn">Wolfram Alpha</div><div class="cd">强大的计算知识引擎</div></div></a>
       </div>
     </div>
-
-    <!-- 🛒 购物出行 -->
-    <div class="sec c-shop rv" id="s7">
+    <!-- 08 购物出行 -->
+    <div class="sec rv" id="s7">
       <div class="sec-hd" onclick="tog('s7')">
-        <span class="sec-label">🛒 购物出行</span>
-        <span class="sec-n">5 个</span>
+        <span class="sec-label">08 / 购物出行</span>
+        <span class="sec-n">5 sites</span>
         <div class="sec-line"></div>
         <span class="sec-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
       </div>
@@ -613,7 +464,7 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
 
     <!-- Empty state -->
     <div class="empty" id="emp">
-      <div class="empty-ico">🔍</div>
+      <div class="empty-ico">?</div>
       <p>没有找到匹配的网站</p>
     </div>
 
@@ -634,25 +485,6 @@ html[data-theme="light"] .c-shop   .card:hover{box-shadow:0 10px 40px rgba(245,1
 </div><!-- .page -->
 
 <script>
-// ── Theme toggle ─────────────────────────────
-(function(){
-  const saved = localStorage.getItem('theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const theme = saved || (prefersDark ? 'dark' : 'light');
-  if(theme === 'light') document.documentElement.setAttribute('data-theme','light');
-})();
-
-document.getElementById('themeBtn').addEventListener('click', () => {
-  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-  if(isLight){
-    document.documentElement.removeAttribute('data-theme');
-    localStorage.setItem('theme','dark');
-  } else {
-    document.documentElement.setAttribute('data-theme','light');
-    localStorage.setItem('theme','light');
-  }
-});
-
 // ── Section toggle ──────────────────────────
 function tog(id){ document.getElementById(id).classList.toggle('collapsed') }
 
